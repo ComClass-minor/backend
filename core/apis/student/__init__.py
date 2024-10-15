@@ -1,0 +1,1 @@
+from .register import router as student_register_router
