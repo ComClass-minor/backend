@@ -3,13 +3,14 @@
 from fastapi import APIRouter, HTTPException, Depends
 from fastapi.responses import JSONResponse
 from core import app
-from core.models.student import Student
+from core.models.student import Student , StudentLogin
 from core.apis.responses import APIResponse
 from passlib.context import CryptContext
 import jwt
 from datetime import datetime, timedelta
 import secrets
 import logging
+from fastapi import Request
 # import IntegrityError
 
 router = APIRouter()
@@ -19,7 +20,7 @@ SECRET_KEY = secrets.token_urlsafe(32)
 ALGORITHM = "HS256"
 ASSESSION_EXPIRE_MINUTES = 60
 
-def verify_password(plain_password , hashed_password):
+def verify_password(plain_password , hashed_password) -> bool:
     """
     Verify the password of the student by comparing the plain password with the hashed password stored in the database
     """
@@ -33,18 +34,46 @@ def create_jwt_token(data : dict , expire_time : timedelta = timedelta(minutes=A
     expire = datetime.now() + expire_time
     new_data.update({"exp":expire})
     encoded_jwt = jwt.encode(new_data, SECRET_KEY, algorithm=ALGORITHM)
+
+    decoded_jwt = jwt.decode(encoded_jwt, SECRET_KEY, algorithms=[ALGORITHM])
+    print(decoded_jwt)
     return encoded_jwt
 
 @router.post("/signin" , response_model=APIResponse)
-async def signin(student : Student):
+async def signin(student: StudentLogin):
     """
-    Sign in the student
+    Sign in the student using the email and password
     """
     try:
-        student_record = await Student.get_student_by_email(student.email)
+        email = student.email
+        password = student.password
+
+        # Validate the input
+        if not email or not password:
+            raise HTTPException(status_code=400, detail="Email and password must be provided")
+
+    except Exception as e:
+        return APIResponse.respond(
+            status_code=400,
+            status="error",
+            message="Bad request"
+        )
+    try:
+        # Check if the student with this email already exists
+        print(1)
+        student_record = await Student.get_student_by_email(email)
+        print(2)
         if student_record:
-            if verify_password(student.password, student_record["password"]):
-                token = create_jwt_token({"email":student.email})
+            print(6)
+            if verify_password(password, student_record["password"]):
+                print(7)
+                token = create_jwt_token({"email":email})
+                print(8)
+                if "_id" in student_record:
+                    del student_record["_id"]
+                if "id" in student_record:
+                    student_record["id"] = str(student_record["id"])
+                print(student_record)
                 return APIResponse.respond(
                     status_code=200,
                     status="success",
@@ -55,7 +84,7 @@ async def signin(student : Student):
                 return APIResponse.respond(
                     status_code=401,
                     status="error",
-                    message="password"
+                    message="Invalid password"
                 )
         else:
             return APIResponse.respond(
@@ -65,11 +94,12 @@ async def signin(student : Student):
             )
     except Exception as e:
         print(e)
-        return APIResponse.respond(
-            status_code=500,
-            status="error",
-            message="Internal server error"
-        )
+        raise HTTPException(status_code=500, detail="Internal server error") 
+        # return APIResponse.respond(
+        #     status_code=500,
+        #     status="error",
+        #     message="Internal server error"
+        # )
     
 
 @router.post("/signup", response_model=APIResponse)
@@ -95,12 +125,15 @@ async def signup(student: Student):
 
         # Create a new student record
         student_record = await Student.create_student(student)
+
+        # type cast the student record to a dictionary
+        student_record = dict(student_record)
         
         # Create JWT token
         token = create_jwt_token({"email": student.email})
 
         # Serialize student data, excluding the password
-        serialized_student = student_record.dict(exclude={"password"}, by_alias=True)  
+        serialized_student = {k: v for k, v in student_record.items() if k != "password"}
 
         return APIResponse.respond(
             status_code=201,

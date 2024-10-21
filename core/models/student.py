@@ -37,15 +37,6 @@ class Student(BaseModel):
         json_encoders = {
             PyObjectId: str
         }
-
-    @classmethod
-    async def get_student_by_email(cls, email: str):
-        try:
-            student = await db.students.find_one({"email": email})
-            return student
-        except Exception as e:
-            logging.error(f"Error querying the database: {str(e)}")
-            raise
     
     @classmethod
     async def create_student(cls, student: 'Student'):
@@ -55,6 +46,37 @@ class Student(BaseModel):
         except Exception as e:
             logging.error(f"Error creating student: {str(e)}")
             raise
+    
+    async def get_student_by_email(email) -> dict:
+        try:
+            print(3)
+            student = await db.students.find_one({"email": email})
+            print(4)
+            # convert the student record to a dictionary
+            student = dict(student)
+            print(5)
+            return student
+        except Exception as e:
+            logging.error(f"Error fetching student by email: {str(e)}")
+            raise
+    
+    class Config:
+        json_encoders = {
+            ObjectId: str
+        }
+
 
     def __repr__(self):
         return f'<Student {self.id}>'
+
+
+
+class StudentLogin(BaseModel):
+    email: str
+    password: str
+
+    @validator('email')
+    def email_must_be_valid(cls, v):
+        if '@' not in v:
+            raise ValueError('Invalid email address')
+        return v
