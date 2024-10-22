@@ -41,7 +41,11 @@ class Student(BaseModel):
     @classmethod
     async def create_student(cls, student: 'Student'):
         try:
+            print(1)
             student = await db.students.insert_one(student.dict())
+            print(2)
+            # we will print the datatype of the student object
+            print(f"Student type: {type(student)}")
             return student
         except Exception as e:
             logging.error(f"Error creating student: {str(e)}")
@@ -53,7 +57,7 @@ class Student(BaseModel):
             student = await db.students.find_one({"email": email})
             print(4)
             # convert the student record to a dictionary
-            student = dict(student)
+            # student = dict(student)
             print(5)
             return student
         except Exception as e:

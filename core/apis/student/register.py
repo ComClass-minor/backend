@@ -125,15 +125,31 @@ async def signup(student: Student):
 
         # Create a new student record
         student_record = await Student.create_student(student)
+        print(student_record)
 
-        # type cast the student record to a dictionary
-        student_record = dict(student_record)
+        # # type cast the student record to a dictionary
+        # try:
+        #     student_record = dict(student_record)
+        #     print(student_record)
+        # except Exception as e:
+        #     print(e)
+        #     logging.error(f"Error converting student record to dictionary: {str(e)}")
         
         # Create JWT token
         token = create_jwt_token({"email": student.email})
 
         # Serialize student data, excluding the password
-        serialized_student = {k: v for k, v in student_record.items() if k != "password"}
+        serialized_student = {
+            "id": str(student),
+            # "user_id": student_record.user_id,
+            "name": student.name,
+            "email": student.email,
+            "created_at": student.created_at,
+            "updated_at": student.updated_at,
+            "rating": student.rating,
+            "group_list": student.group_list,
+            "group_limit": student.group_limit
+        }
 
         return APIResponse.respond(
             status_code=201,

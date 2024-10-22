@@ -3,6 +3,7 @@ mongosh mongodb://localhost:27017
 show dbs
 use community
 db.students.find().pretty()
+db.students.deleteOne({ user_id: "basic_user" })
 
 python3 -m core.server
 
