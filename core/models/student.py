@@ -6,6 +6,7 @@ from pydantic import validator
 from datetime import datetime
 from typing import List, Optional
 from core import db
+from core.libs import assertions
 import logging
 
 class PyObjectId(ObjectId):
@@ -39,26 +40,63 @@ class Student(BaseModel):
         }
     
     @classmethod
-    async def create_student(cls, student: 'Student'):
+    async def create_student(cls, student: 'Student') -> 'Student':
+        """
+        This is a classmethod for Student and as the name suggests, it is used to create a new student record in the database.
+        param: student: Student object
+            student: Student Object : {
+                "user_id": str,
+                "name": str,
+                "email": str,
+                "password": str,
+                }
+        return: student: Student Object
+            {
+                "user_id": str,
+                "name": str,
+                "email": str,
+                "password": str,
+                "created_at": datetime,
+                "updated_at": datetime,
+                "rating": int,
+                "group_list": List[str],
+                "group_limit": int
+            }
+        """ 
         try:
-            print(1)
             student = await db.students.insert_one(student.dict())
-            print(2)
-            # we will print the datatype of the student object
-            print(f"Student type: {type(student)}")
+            # print(f"Student type: {type(student)}")
             return student
         except Exception as e:
             logging.error(f"Error creating student: {str(e)}")
             raise
     
-    async def get_student_by_email(email) -> dict:
+    @staticmethod
+    async def get_student_by_id(id: str) -> 'Student':
+        """
+        This is not a classmethod, but a static method. It is used to fetch a student record from the database by id.
+        param: id: str
+        returns student: Student Object
+        """
         try:
-            print(3)
+            student = await db.students.find_one({"user_id": id})
+            assertions.assert_not_found(student, "Student not found")
+            return student
+        except Exception as e:
+            logging.error(f"Error fetching student by id: {str(e)}")
+            raise
+
+
+    @staticmethod
+    async def get_student_by_email(email : str) -> 'Student':
+        """
+        This is not a classmethod, but a static method. It is used to fetch a student record from the database by email.
+        param: email: str
+        returns student: Student Object
+        """
+        try:
             student = await db.students.find_one({"email": email})
-            print(4)
-            # convert the student record to a dictionary
-            # student = dict(student)
-            print(5)
+            assertions.assert_not_found(student, "Student not found")
             return student
         except Exception as e:
             logging.error(f"Error fetching student by email: {str(e)}")
