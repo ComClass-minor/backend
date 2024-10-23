@@ -60,15 +60,10 @@ async def signin(student: StudentLogin):
         )
     try:
         # Check if the student with this email already exists
-        print(1)
         student_record = await Student.get_student_by_email(email)
-        print(2)
         if student_record:
-            print(6)
             if verify_password(password, student_record["password"]):
-                print(7)
                 token = create_jwt_token({"email":email})
-                print(8)
                 if "_id" in student_record:
                     del student_record["_id"]
                 if "id" in student_record:
@@ -127,13 +122,6 @@ async def signup(student: Student):
         student_record = await Student.create_student(student)
         print(student_record)
 
-        # # type cast the student record to a dictionary
-        # try:
-        #     student_record = dict(student_record)
-        #     print(student_record)
-        # except Exception as e:
-        #     print(e)
-        #     logging.error(f"Error converting student record to dictionary: {str(e)}")
         
         # Create JWT token
         token = create_jwt_token({"email": student.email})
