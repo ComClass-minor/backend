@@ -2,7 +2,7 @@
 
 from fastapi import APIRouter, HTTPException, Depends
 from fastapi.responses import JSONResponse
-from core import app
+from core import app , SECRET_KEY
 from core.models.student import Student , StudentLogin
 from core.apis.responses import APIResponse
 from passlib.context import CryptContext
@@ -11,12 +11,12 @@ from datetime import datetime, timedelta
 import secrets
 import logging
 from fastapi import Request
+
 # import IntegrityError
 
 router = APIRouter()
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-SECRET_KEY = secrets.token_urlsafe(32)
 ALGORITHM = "HS256"
 ASSESSION_EXPIRE_MINUTES = 60
 
@@ -28,15 +28,23 @@ def verify_password(plain_password , hashed_password) -> bool:
 
 def create_jwt_token(data : dict , expire_time : timedelta = timedelta(minutes=ASSESSION_EXPIRE_MINUTES)):
     """
-    Create a JWT token for the student
+    Create a JWT token for the student.
+    Args:
+        data (dict): The data to encode into the token (usually only email).
+        expire_time (timedelta): The time duration after which the token should expire.
+    Returns:
+        str: The encoded JWT token.
     """
+    print(1)
     new_data = data.copy()
+    print(2)
     expire = datetime.now() + expire_time
+    print(3)
     new_data.update({"exp":expire})
+    print(4)
+    print(new_data , SECRET_KEY , ALGORITHM)
     encoded_jwt = jwt.encode(new_data, SECRET_KEY, algorithm=ALGORITHM)
-
-    decoded_jwt = jwt.decode(encoded_jwt, SECRET_KEY, algorithms=[ALGORITHM])
-    print(decoded_jwt)
+    print(5)
     return encoded_jwt
 
 @router.post("/signin" , response_model=APIResponse)
@@ -61,14 +69,18 @@ async def signin(student: StudentLogin):
     try:
         # Check if the student with this email already exists
         student_record = await Student.get_student_by_email(email)
+        print(student_record)
         if student_record:
+            print(student_record["password"])
             if verify_password(password, student_record["password"]):
+                print("Password verified")
                 token = create_jwt_token({"email":email})
+                print(token)
                 if "_id" in student_record:
                     del student_record["_id"]
                 if "id" in student_record:
                     student_record["id"] = str(student_record["id"])
-                print(student_record)
+                print(student_record , 2)
                 return APIResponse.respond(
                     status_code=200,
                     status="success",

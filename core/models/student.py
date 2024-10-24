@@ -65,11 +65,49 @@ class Student(BaseModel):
         """ 
         try:
             student = await db.students.insert_one(student.dict())
-            # print(f"Student type: {type(student)}")
-            return student
+            return student 
         except Exception as e:
             logging.error(f"Error creating student: {str(e)}")
             raise
+    
+    @classmethod
+    async def update_student(cls, student: 'Student') -> 'Student':
+        """
+        This is a classmethod for Student and as the name suggests, it is used to update a student record in the database.
+        param: student: Student object
+            student: Student Object : {
+                "user_id": str,
+                "name": str,
+                "email": str,
+                "password": str,
+                "created_at": datetime,
+                "updated_at": datetime,
+                "rating": int,
+                "group_list": List[str],
+                "group_limit": int
+            }
+        
+        return: student: Student Object
+            {
+                "user_id": str,
+                "name": str,
+                "email": str,
+                "password": str,
+                "created_at": datetime,
+                "updated_at": datetime,
+                "rating": int,
+                "group_list": List[str],
+                "group_limit": int
+            }
+        """
+        try:
+            student['updated_at'] = datetime.now()
+            student = await db.students.update_one({"user_id": student['user_id']}, {"$set": student})
+            return student
+        except Exception as e:
+            logging.error(f"Error updating student: {str(e)}")
+            raise
+
     
     @staticmethod
     async def get_student_by_id(id: str) -> 'Student':
