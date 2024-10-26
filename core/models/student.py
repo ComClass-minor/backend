@@ -134,7 +134,6 @@ class Student(BaseModel):
         """
         try:
             student = await db.students.find_one({"email": email})
-            assertions.assert_not_found(student, "Student not found")
             return student
         except Exception as e:
             logging.error(f"Error fetching student by email: {str(e)}")
@@ -155,8 +154,8 @@ class StudentLogin(BaseModel):
     email: str
     password: str
 
-    @validator('email')
-    def email_must_be_valid(cls, v):
-        if '@' not in v:
-            raise ValueError('Invalid email address')
-        return v
+    # @validator('email')
+    # def email_must_be_valid(cls, v):
+    #     if '@' not in v:
+    #         raise ValueError('Invalid email address')
+    #     return v
