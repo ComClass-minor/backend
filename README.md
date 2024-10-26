@@ -17,7 +17,7 @@ A RESTful API for managing student groups and authentication. The API allows stu
 Create a new student account.
 
 ```http
-POST student/signup
+POST /student/signup
 ```
 
 **Request Body:**
@@ -57,7 +57,7 @@ POST student/signup
 Authenticate an existing student.
 
 ```http
-POST student/signin
+POST /student/signin
 ```
 
 **Request Body:**
