@@ -7,22 +7,39 @@ db.students.deleteOne({ user_id: "basic_user" })
 
 python3 -m core.server
 
-singup
-{ 
-    "user_id": "Vish02", 
-    "name": "Vishal", 
-    "email": "Vishu", 
+# Student Group Management API
+
+A RESTful API for managing student groups and authentication. The API allows students to sign up, sign in, create groups, and manage their group memberships.
+
+## Authentication Endpoints
+
+### Sign Up
+Create a new student account.
+
+```http
+POST /signup
+```
+
+**Request Body:**
+```json
+{
+    "user_id": "Vish02",
+    "name": "Vishal",
+    "email": "Vishu",
     "password": "veryverysecurepassword123",
-    "rating": 10 
+    "rating": 10
 }
-response
+```
+
+**Success Response:**
+```json
 {
     "status": "success",
     "message": "Student signed up successfully",
     "data": {
-        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IlZpc2h1IiwiZXhwIjoxNzI5OTcwNzg1fQ.nZaisOc6Wd0_uWZsGB2v2bA2g-i1rHJdSggPSzHGU44",
+        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
         "student": {
-            "id": "id=ObjectId('671ce6f7659d1fd2af977459') user_id='Vish02' name='Vishal' email='Vishu' password='$2b$12$vO1HKKhE9nchH2B4/Ap1bumm1teWUZBBDKAs6pfaUv5sCSbojKACK' created_at=datetime.datetime(2024, 10, 26, 18, 26, 23, 865470) updated_at=datetime.datetime(2024, 10, 26, 18, 26, 23, 865526) rating=10 group_list=[] group_limit=5",
+            "id": "671ce6f7659d1fd2af977459",
             "name": "Vishal",
             "email": "Vishu",
             "created_at": "2024-10-26T18:26:23.865470",
@@ -34,27 +51,35 @@ response
     },
     "status_code": 201
 }
+```
 
+### Sign In
+Authenticate an existing student.
 
+```http
+POST /signin
+```
 
-
-signin
+**Request Body:**
+```json
 {
-  "email": "Vishu",
-  "password": "veryverysecurepassword123"
+    "email": "Vishu",
+    "password": "veryverysecurepassword123"
 }
-response
+```
+
+**Success Response:**
+```json
 {
     "status": "success",
     "message": "Student signed in successfully",
     "data": {
-        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IlZpc2h1IiwiZXhwIjoxNzI5OTcxMTQzfQ.YViyl2qolG0DOGjeJnJGkBT22p-Gw8gGkcm1G5Zv4i0",
+        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
         "student": {
             "id": "671ce6f7659d1fd2af977459",
             "user_id": "Vish02",
             "name": "Vishal",
             "email": "Vishu",
-            "password": "$2b$12$vO1HKKhE9nchH2B4/Ap1bumm1teWUZBBDKAs6pfaUv5sCSbojKACK",
             "created_at": "2024-10-26T18:26:23.865000",
             "updated_at": "2024-10-26T18:26:23.865000",
             "rating": 10,
@@ -64,38 +89,68 @@ response
     },
     "status_code": 200
 }
+```
 
-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImJsdWVfZmxhbWVAZ21haWwuY29tIiwiZXhwIjoxNzI5Nzk2NzYzfQ.7IEBkNUl3A0qyQh8BG8GzH6KA27OZwfZ8eBISikhKiQ
+## Group Management Endpoints
 
-gh pr create --base <base-branch> --head <branch-name> --title "PR Title" --body "Description of the changes"
+### Create Group
+Create a new study group.
 
-group/create_group
+```http
+POST /group/create_group
+```
+
+**Request Body:**
+```json
 {
     "name": "Django",
     "feild": "Web Development",
     "min_requirement": 5,
     "creator_id": "Vish02"
 }
-response
+```
+
+**Success Response:**
+```json
 {
     "status": "success",
     "message": "Group created successfully",
     "data": null,
     "status_code": 201
 }
+```
 
+## Database Schema
 
-database student 
-  {
-    _id: ObjectId('671ce6f9659d1fd2af97745a'),
-    id: ObjectId('671ce6f7659d1fd2af977459'),
-    user_id: 'Vish02',
-    name: 'Vishal',
-    email: 'Vishu',
-    password: '$2b$12$vO1HKKhE9nchH2B4/Ap1bumm1teWUZBBDKAs6pfaUv5sCSbojKACK',
-    created_at: ISODate('2024-10-26T18:26:23.865Z'),
-    updated_at: ISODate('2024-10-26T18:34:19.189Z'),
-    rating: 10,
-    group_list: null,
-    group_limit: 4
-  }
+### Student Collection
+
+```javascript
+{
+    _id: ObjectId,
+    id: ObjectId,
+    user_id: String,
+    name: String,
+    email: String,
+    password: String,  // Hashed using bcrypt
+    created_at: DateTime,
+    updated_at: DateTime,
+    rating: Number,
+    group_list: Array,
+    group_limit: Number
+}
+```
+
+## Status Codes
+
+- 200: OK
+- 201: Created
+- 400: Bad Request
+- 401: Unauthorized
+- 403: Forbidden
+- 404: Not Found
+- 500: Internal Server Error
+
+<!-- 
+```bash
+gh pr create --base <base-branch> --head <branch-name> --title "PR Title" --body "Description of the changes"
+``` -->
