@@ -30,7 +30,7 @@ class Student(BaseModel):
     created_at: Optional[datetime] = Field(default_factory=datetime.now)
     updated_at: Optional[datetime] = Field(default_factory=datetime.now)
     rating: Optional[int] = Field(default=0)
-    group_list: Optional[List[str]] = Field(default=[])
+    group_list: Optional[List[dict]] = Field(default=[])
     group_limit: Optional[int] = Field(default=5)
 
     class Config:
@@ -64,6 +64,7 @@ class Student(BaseModel):
             }
         """ 
         try:
+            student.group_list = []
             student = await db.students.insert_one(student.dict())
             return student 
         except Exception as e:
@@ -101,13 +102,19 @@ class Student(BaseModel):
             }
         """
         try:
+            # Ensure keys are strings
+            # student = {str(k): v if not isinstance(v, ObjectId) else str(v) for k, v in student.items()}
             student['updated_at'] = datetime.now()
-            student = await db.students.update_one({"user_id": student['user_id']}, {"$set": student})
-            return student
+            # student['group_list'] = [
+            
+            updated_student = await db.students.update_one(
+                {"user_id": student['user_id']}, 
+                {"$set": student}
+            )
+            return updated_student
         except Exception as e:
-            logging.error(f"Error updating student: {str(e)}")
+            logging.error(f"Error updating student: {e}")
             raise
-
     
     @staticmethod
     async def get_student_by_id(id: str) -> 'Student':
@@ -139,6 +146,45 @@ class Student(BaseModel):
             logging.error(f"Error fetching student by email: {str(e)}")
             raise
     
+    @staticmethod
+    async def get_all_students() -> List['Student']:
+        """
+        This is not a classmethod, but a static method. It is used to fetch all student records from the database.
+        returns students: List[Student Object]
+        """
+        try:
+            students = await db.students.find()
+            return students
+        except Exception as e:
+            logging.error(f"Error fetching all students: {str(e)}")
+            raise
+    
+    @staticmethod
+    async def delete_student_by_id(id: str) -> 'Student':
+        """
+        This is not a classmethod, but a static method. It is used to delete a student record from the database by id.
+        param: id: str
+        returns student: Student Object
+        """
+        try:
+            student = await db.students.delete_one({"user_id": id})
+            assertions.assert_not_found(student, "Student not found")
+            # we will also del
+            return student
+        except Exception as e:
+            logging.error(f"Error deleting student by id: {str(e)}")
+            raise
+
+
+
+
+    # @validator('email')
+    # def email_must_be_valid(cls, v):
+    #     if '@' not in v:
+    #         raise ValueError('Invalid email address')
+    #     return v
+
+
     class Config:
         json_encoders = {
             ObjectId: str
@@ -154,8 +200,4 @@ class StudentLogin(BaseModel):
     email: str
     password: str
 
-    # @validator('email')
-    # def email_must_be_valid(cls, v):
-    #     if '@' not in v:
-    #         raise ValueError('Invalid email address')
-    #     return v
+

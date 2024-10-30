@@ -4,6 +4,7 @@ show dbs
 use community
 db.students.find().pretty()
 db.students.deleteOne({ user_id: "basic_user" })
+db.groups.deleteOne({ creator_id: "Vish02" })
 
 python3 -m core.server
 
@@ -37,7 +38,7 @@ POST /student/signup
     "status": "success",
     "message": "Student signed up successfully",
     "data": {
-        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IlZpc2h1IiwiZXhwIjoxNzMwMzE5NDkxfQ.jBijfkT_GSj5QWsFjaejdz9V2eqSg_0GvLgeQ33QgUs",
         "student": {
             "id": "671ce6f7659d1fd2af977459",
             "name": "Vishal",
