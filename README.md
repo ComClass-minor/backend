@@ -32,6 +32,17 @@ POST /student/signup
 }
 ```
 
+<!-- another user -->
+```json
+{
+    "user_id": "blue_flames",
+    "name": "blue flame",
+    "email": "blue_flame@gmail.com",
+    "password": "verysecurepassword123",
+    "rating": 10
+}
+```
+
 **Success Response:**
 ```json
 {
@@ -155,3 +166,8 @@ POST /group/create_group
 ```bash
 gh pr create --base <base-branch> --head <branch-name> --title "PR Title" --body "Description of the changes"
 ``` -->
+
+group_id : "67223f67f9e66bc05ca502c4"
+user_id : "blue_flames"
+
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImJsdWVfZmxhbWVAZ21haWwuY29tIiwiZXhwIjoxNzMwMzIyMDQ2fQ.iQ4uydAs0Wskcrg3SDrHOIyHatfc2D1pkCQmb0sF7ro

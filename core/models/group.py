@@ -93,3 +93,36 @@ class Group(BaseModel):
             logging.error(f"An error occurred: {e}")
             return None
     
+
+    @staticmethod
+    async def join_group(group_id: str, student_id: str) -> bool:
+        try:
+            group = await db.groups.find_one({"_id": ObjectId(group_id)})
+            assertions.assert_not_found(group, "Group not found")
+            student = await Student.get_student_by_id(student_id)
+            assertions.assert_not_found(student, "Student not found")
+            group['student_list'] += [{student_id: "Member"}]
+            student['group_list'] += [{group_id: "Member"}]
+            await db.groups.update_one({"_id": ObjectId(group_id)}, {"$set": group})
+            await Student.update_student(student)
+            return True
+        except Exception as e:
+            logging.error(f"An error occurred: {e}")
+            return False
+    
+
+    @staticmethod
+    async def leave_group(group_id: str, student_id: str) -> bool:
+        try:
+            group = await db.groups.find_one({"_id": ObjectId(group_id)})
+            assertions.assert_not_found(group, "Group not found")
+            student = await Student.get_student_by_id(student_id)
+            assertions.assert_not_found(student, "Student not found")
+            group['student_list'] = [student for student in group['student_list'] if student != student_id]
+            student['group_list'] = [group for group in student['group_list'] if group != group_id]
+            await db.groups.update_one({"_id": ObjectId(group_id)}, {"$set": group})
+            await Student.update_student(student)
+            return True
+        except Exception as e:
+            logging.error(f"An error occurred: {e}")
+            return False
