@@ -105,7 +105,6 @@ class Student(BaseModel):
             # Ensure keys are strings
             # student = {str(k): v if not isinstance(v, ObjectId) else str(v) for k, v in student.items()}
             student['updated_at'] = datetime.now()
-            # student['group_list'] = [
             
             updated_student = await db.students.update_one(
                 {"user_id": student['user_id']}, 

@@ -140,7 +140,7 @@ async def signup(student: Student):
 
         # Serialize student data, excluding the password
         serialized_student = {
-            "id": str(student),
+            "id": str(student.id),
             # "user_id": student_record.user_id,
             "name": student.name,
             "email": student.email,

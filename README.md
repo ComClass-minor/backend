@@ -65,6 +65,27 @@ POST /student/signup
 }
 ```
 
+```json
+{
+    "status": "success",
+    "message": "Student signed up successfully",
+    "data": {
+        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImJsdWVfZmxhbWVAZ21haWwuY29tIiwiZXhwIjoxNzMwOTM0MTIxfQ.c-5-7dO0oNnfLW_ITbEsVkDufoeTmry7VCVp5P1qKlc",
+        "student": {
+            "id": "672b99ff3eb7e8eac55ef74e",
+            "name": "blue flame",
+            "email": "blue_flame@gmail.com",
+            "created_at": "2024-11-06T22:01:59.939992",
+            "updated_at": "2024-11-06T22:01:59.940032",
+            "rating": 10,
+            "group_list": [],
+            "group_limit": 5
+        }
+    },
+    "status_code": 201
+}
+```
+
 ### Sign In
 Authenticate an existing student.
 
@@ -171,3 +192,5 @@ group_id : "67223f67f9e66bc05ca502c4"
 user_id : "blue_flames"
 
 eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImJsdWVfZmxhbWVAZ21haWwuY29tIiwiZXhwIjoxNzMwMzIyMDQ2fQ.iQ4uydAs0Wskcrg3SDrHOIyHatfc2D1pkCQmb0sF7ro
+
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImJsdWVfZmxhbWVAZ21haWwuY29tIiwiZXhwIjoxNzMwOTM0MjIwfQ.XuFRTlppOw6onYoNN6p_LEdNDap1blv6EYWD30QjpCY
