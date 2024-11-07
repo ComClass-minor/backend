@@ -68,8 +68,9 @@ jobs:
           python -m pip install --upgrade pip
           pip install pytest
 
-      - name: Run tests
+      - name: Run tests 
         run: |
+          sleep 10
           echo "Running tests..."
 
 
@@ -134,4 +135,4 @@ jobs:
         with:
           app-name: 'comclass-minor-backend' # replace with your Azure App Service name
           slot-name: 'production'
-          images: comclassminorregistry.azurecr.io/backend-minor:latest
+          images: comclassminorregistry.azurecr.io/comclass-minor-backend:latest
