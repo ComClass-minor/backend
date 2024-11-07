@@ -1,0 +1,34 @@
+name: CI/CD Pipeline with Docker Compose
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Docker Compose
+        uses: docker/compose-cli-action@v0.1.1
+        with:
+          compose-cli-version: '1.0.17'
+
+      - name: Build services
+        run: docker compose build
+
+      # - name: Push services
+      #   run: docker compose push
+
+      - name: Deploy services
+        run: docker compose up -d
+
+      - name: Stop services
+        run: docker compose down
