@@ -103,6 +103,8 @@ jobs:
       
       - name: Deploy to Azure Web App
         run: |
-          az webapp container set --name comclass-minor-app \
+          az webapp up \
             --resource-group comclass-minor-rg \
-            --docker-custom-image-name comclassminorregistry.azurecr.io/comclass-minor-backend:latest
+            --name comclass-minor-app \
+            --plan comclass-minor-plan \
+            --deployment-container-image-name comclassminorregistry.azurecr.io/comclass-minor-backend:latest
