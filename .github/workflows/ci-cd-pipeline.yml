@@ -33,6 +33,8 @@ jobs:
         run: |
           python core/config.py
 
+      - name: Check if the .env file was generated
+        run: cat core/.env
 
       # Build Docker images using Docker Compose
       - name: Build services
