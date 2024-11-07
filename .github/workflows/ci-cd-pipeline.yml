@@ -49,8 +49,31 @@ jobs:
       
       - name: clean up
         run: docker compose down
+  
   # we will add dummy test to make sure that this stage is working
   testing:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest
+
+      - name: Run tests
+        run: |
+          echo "Running tests..."
+
+
+  deploy:
     needs: build
     runs-on: ubuntu-latest
     steps:
@@ -118,14 +141,17 @@ jobs:
         run: |
           docker build -t comclassminorregistry.azurecr.io/comclass-minor-backend:latest .
           docker push comclassminorregistry.azurecr.io/comclass-minor-backend:latest
-      
-      
-      - name: Deploy to Azure Web App
+
+      # Create a Web App on Azure
+      - name: Create a Web App on Azure
         run: |
-          az webapp config container set \
-            --name comclass-minor-app \
-            --resource-group comclass-minor-rg \
-            --docker-custom-image-name comclassminorregistry.azurecr.io/comclass-minor-backend:latest \
-            --docker-registry-server-url https://comclassminorregistry.azurecr.io \
-            --docker-registry-server-user comclassminorregistry \
-            --docker-registry-server-password ${{ secrets.ACR_PASSWORD }}
+          az webapp up --name comclass-minor-backend --sku F1 --location centralindia --os-type Linux
+        
+
+ # Deploy to Azure Web App
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: 'comclass-minor-backend' # replace with your Azure App Service name
+          slot-name: 'production'
+          images: comclassminorregistry.azurecr.io/backend-minor:latest
