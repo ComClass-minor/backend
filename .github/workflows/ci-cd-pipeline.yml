@@ -83,12 +83,26 @@ jobs:
       - name: Check if the .env file was generated
         run: cat core/.env
 
-      # Build Docker images using Docker Compose
-      - name: Build services
-        run: docker compose build
+      # Login to Azure using the AZURE_CREDENTIALS secret
+      - name: Login to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      # Deploy services to Azure Web App
-      - name: Deploy to Azure
+      # Log in to Azure Container Registry
+      - name: Log in to Azure Container Registry
         run: |
-          az login
-          az webapp up --resource-group comclass-minor-rg --name comclass-minor-app --plan comclass-minor-plan --sku B1 --docker-compose-file docker-compose.yml
+          az acr login --name comclassminorregistry
+
+      # Build and Tag Docker Image
+      - name: Build and Tag Docker Image
+        run: |
+          docker build -t comclassminorregistry.azurecr.io/comclass-minor-backend:latest .
+          docker push comclassminorregistry.azurecr.io/comclass-minor-backend:latest
+      
+      
+      - name: Deploy to Azure Web App
+        run: |
+          az webapp container set --name comclass-minor-app \
+            --resource-group comclass-minor-rg \
+            --docker-custom-image-name comclassminorregistry.azurecr.io/comclass-minor-backend:latest
