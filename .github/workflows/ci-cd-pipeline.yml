@@ -103,8 +103,10 @@ jobs:
       
       - name: Deploy to Azure Web App
         run: |
-          az webapp up \
-            --resource-group comclass-minor-rg \
+          az webapp config container set \
             --name comclass-minor-app \
-            --plan comclass-minor-plan \
-            --deployment-container-image-name comclassminorregistry.azurecr.io/comclass-minor-backend:latest
+            --resource-group comclass-minor-rg \
+            --docker-custom-image-name comclassminorregistry.azurecr.io/comclass-minor-backend:latest \
+            --docker-registry-server-url https://comclassminorregistry.azurecr.io \
+            --docker-registry-server-user comclassminorregistry \
+            --docker-registry-server-password ${{ secrets.ACR_PASSWORD }}
