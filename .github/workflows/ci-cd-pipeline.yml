@@ -11,7 +11,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -48,49 +47,48 @@ jobs:
       - name: Deploy services
         run: docker compose up -d
       
-      -name: clean up
-        run: docker-compose down
+      - name: clean up
+        run: docker compose down
   
 
 
   deploy:
     needs: build
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
     # Set up Docker Buildx (Docker Compose is included with Docker CLI)
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
 
     # Set up Python (if needed to run the config file to generate .env)
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: '3.x'
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
 
-    # Install dependencies
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
+      # Install dependencies
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
 
-    # Generate .env file
-    - name: Generate .env file
-      run: |
-        python core/config.py
+      # Generate .env file
+      - name: Generate .env file
+        run: |
+          python core/config.py
 
-    # Check if the .env file was generated
-    - name: Check if the .env file was generated
-      run: cat core/.env
+      # Check if the .env file was generated
+      - name: Check if the .env file was generated
+        run: cat core/.env
 
-    # Build Docker images using Docker Compose
-    - name: Build services
-      run: docker compose build
+      # Build Docker images using Docker Compose
+      - name: Build services
+        run: docker compose build
 
-    # Deploy services to Azure Web App
-    - name: Deploy to Azure
-      run: |
-        az login
-        az webapp up --resource-group comclass-minor-rg --name comclass-minor-app --plan comclass-minor-plan --sku B1 --docker-compose-file docker-compose.yml
+      # Deploy services to Azure Web App
+      - name: Deploy to Azure
+        run: |
+          az login
+          az webapp up --resource-group comclass-minor-rg --name comclass-minor-app --plan comclass-minor-plan --sku B1 --docker-compose-file docker-compose.yml
