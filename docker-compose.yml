@@ -2,7 +2,6 @@ services:
   backend:
     image: backend-minor:latest
     container_name: backend-minor
-    pull_policy: never
     build:
       context: .
       dockerfile: Dockerfile
@@ -17,9 +16,7 @@ services:
   mongodb:
     image: mongo
     container_name: mongodb-minor
-    # env_file:
-    #   - ./mongodb/.env
-    
+
     volumes:
       - mongodb-data:/data/db
     ports:
@@ -31,7 +28,7 @@ services:
     ports:
       - "8081:8081"
     environment:
-      ME_CONFIG_MONGODB_SERVER: mongodb://mongodb:27017
+      ME_CONFIG_MONGODB_SERVER: mongodb
     depends_on:
       - mongodb
   
