@@ -260,3 +260,30 @@ GET /blog/get_blogs?author_id={author_id} || GET /blog/get_blogs?author_id=satya
     "status_code": 200
 }
 ```
+
+## API Like Blog
+
+```http
+PUT /blog/like_blog
+```
+
+**Request Body:**
+```json
+{
+    "blog_id" : "6738b9b77109004fe268674b",
+    "user_id" : "satyam"
+}
+```
+
+**Success Response:**
+```json
+{
+    "status": "success",
+    "message": "Blog removed successfully",
+    "data": {
+        "blog_id": "6738b9b77109004fe268674b",
+        "deleted_at": "2024-11-16T16:42:27.437510"
+    },
+    "status_code": 200
+}
+```

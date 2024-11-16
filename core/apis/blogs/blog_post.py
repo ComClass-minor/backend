@@ -3,6 +3,7 @@ from core.models.blogs import Blog
 from core.apis.responses import APIResponse
 from fastapi import APIRouter, HTTPException, Request , Depends , Body , Query
 from core.apis import decorators
+from datetime import datetime
 import logging
 
 router = APIRouter()
@@ -107,7 +108,7 @@ async def like_blog( blog_id: str = Body(...) , user_id: str = Body(...)) -> API
         )
     
 @router.delete("/remove_blog", response_model=APIResponse)
-async def remove_blog(blog_id: str = Body(...)) -> APIResponse:
+async def remove_blog(blog_id: str = Body(..., embed=True)) -> APIResponse:
     """
     Remove a blog.
     Args:
@@ -124,8 +125,12 @@ async def remove_blog(blog_id: str = Body(...)) -> APIResponse:
             return APIResponse.respond(
                 status_code=200,
                 status="success",
-                message="Blog removed successfully"
-            )
+                message="Blog removed successfully",
+                data={
+                    "blog_id": blog_id,
+                    "deleted_at": datetime.now()
+                }
+                )
         else:
             raise HTTPException(
                 status_code=500,
