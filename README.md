@@ -191,6 +191,72 @@ gh pr create --base <base-branch> --head <branch-name> --title "PR Title" --body
 group_id : "67223f67f9e66bc05ca502c4"
 user_id : "blue_flames"
 
-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImJsdWVfZmxhbWVAZ21haWwuY29tIiwiZXhwIjoxNzMwMzIyMDQ2fQ.iQ4uydAs0Wskcrg3SDrHOIyHatfc2D1pkCQmb0sF7ro
+## API Create Blog
 
-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImJsdWVfZmxhbWVAZ21haWwuY29tIiwiZXhwIjoxNzMwOTM0MjIwfQ.XuFRTlppOw6onYoNN6p_LEdNDap1blv6EYWD30QjpCY
+```http
+POST /blog/create_blog
+```
+
+**Request Body:**
+```json
+{
+    "title": "Hell Yeah",
+    "content": "too too much content",
+    "author_id": "satyam"
+}
+```
+
+**Success Response:**
+```json
+{
+    "status": "success",
+    "message": "Blog created successfully",
+    "data": null,
+    "status_code": 201
+}
+``` 
+{
+    "status": "success",
+    "message": "Student signed in successfully",
+    "data": {
+        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNhdHlhbV9qaGFAZ21haWwuY29tIiwiZXhwIjoxNzMxNzczNzU5fQ.flXVpUqq3WaUFM4MW1T-cJaGG_J43l8A4vb_oJgNYHg",
+        "student": {
+            "id": "672c89ef6df9367db4775391",
+            "user_id": "satyam",
+            "name": "Satyam Jha",
+            "email": "satyam_jha@gmail.com",
+            "password": "$2b$12$biS7/ItHPiFbH2N2ja339et0P9/BQBl1uFS3qdzijWvKYCXR2oNoO",
+            "created_at": "2024-11-07T09:35:43.123000",
+            "updated_at": "2024-11-07T09:35:43.123000",
+            "rating": 10,
+            "group_list": [],
+            "group_limit": 5
+        }
+    },
+    "status_code": 200
+}
+
+## API Get Blogs
+
+```http
+GET /blog/get_blogs?author_id={author_id} || GET /blog/get_blogs?author_id=satyam 
+```
+
+**Success Response:**
+```json
+{
+    "status": "success",
+    "message": "Blogs retrieved successfully",
+    "data": [
+        {
+            "id": "6738b9b77109004fe268674b",
+            "title": "Hell Yeah",
+            "content": "too too much content",
+            "author_id": "satyam",
+            "created_at": "2024-11-16T15:26:47.358000",
+            "total_likes": 0
+        }
+    ],
+    "status_code": 200
+}
+```

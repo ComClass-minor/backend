@@ -4,12 +4,14 @@ from core import app  # Import the FastAPI app from __init__.py
 # from core.libs import helpers
 from core.apis.student import student_register_router
 from core.apis.groups import groupy_router
+from core.apis.blogs import blogy_router
 # from marshmallow.exceptions import ValidationError
 import uvicorn
 
 # Include your routes
 app.include_router(student_register_router, prefix="/student")
 app.include_router(groupy_router, prefix="/group")
+app.include_router(blogy_router, prefix="/blog")
 
 # app.include_router(student_assignments_resources, prefix="/student")
 # app.include_router(teacher_assignments_resources, prefix="/teacher")

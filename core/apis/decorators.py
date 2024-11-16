@@ -56,7 +56,7 @@ def verify_token(request: Request) -> AuthUser:
     except jwt.ExpiredSignatureError:
         logging.error("Token has expired")
         raise HTTPException(status_code=401, detail="Token has expired")
-    except jwt.JWTError as e:
+    except jwt.PyJWTError as e:
         logging.error(f"Token error: {e}")
         raise HTTPException(status_code=401, detail="Invalid token")
     except Exception as e:

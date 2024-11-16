@@ -8,7 +8,7 @@ env.bak/
 venv.bak/
 *.pyc
 __pycache__/
-
+tchtchtch.py
 # # Unit test / coverage reports
 # .coverage
 # .coverage.*
