@@ -279,6 +279,19 @@ PUT /blog/like_blog
 ```json
 {
     "status": "success",
+    "message": "Blog liked successfully",
+    "data": {
+        "blog_id": "6738b9b77109004fe268674b",
+        "total_likes": 1
+    },
+    "status_code": 200
+}
+```
+
+**Success Response:**
+```json
+{
+    "status": "success",
     "message": "Blog removed successfully",
     "data": {
         "blog_id": "6738b9b77109004fe268674b",

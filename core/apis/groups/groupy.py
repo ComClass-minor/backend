@@ -97,18 +97,13 @@ async def join_group(
 
 
 @router.post("/leave_group", response_model=APIResponse)
-async def leave_group(
-    group_id: str = Body(...),
-    user_id: str = Body(...),
-) -> APIResponse:
+async def leave_group( group_id: str = Body(...), user_id: str = Body(...), ) -> APIResponse:
     """
     Leave a group.
-    
     Args:
         group_id: str
         user_id: str
         user: AuthUser object extracted from the token.
-
     Returns:
         APIResponse object containing:
             - status_code: int

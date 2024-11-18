@@ -8,7 +8,8 @@ env.bak/
 venv.bak/
 *.pyc
 __pycache__/
-tchtchtch.py
 # # Unit test / coverage reports
 # .coverage
 # .coverage.*
+# I dont want to keep the tchtchtch.py file in the repo
+tchtchctch.py
