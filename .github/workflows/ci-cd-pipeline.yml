@@ -104,7 +104,7 @@ jobs:
       - name: Generate .env file
         env:
           # Add any secrets needed for config.py
-          SECRET_KEY: ${{ secrets.ACR_PASSWORD }}
+          SECRET_KEY: ${{ secrets.REGISTRY_PASSWORD }}
           # Add other environment variables
         run: |
           python core/config.py
@@ -118,8 +118,8 @@ jobs:
         uses: azure/docker-login@v1  # Use Azure's official action
         with:
           login-server: ${{ env.REGISTRY_NAME }}.azurecr.io
-          username: ${{ secrets.USERNAME }}
-          password: ${{ secrets.PASSWORD }}
+          username: ${{ secrets.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
           
       - name: Build and push all images
         run: |
