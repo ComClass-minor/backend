@@ -121,11 +121,18 @@ jobs:
           username: ${{ secrets.REGISTRY_USERNAME }}
           password: ${{ secrets.REGISTRY_PASSWORD }}
           
-      - name: Build and push all images
+      - name: Build  all images
         run: |
           # Build and push backend
           docker compose build
-          docker compose push
+      
+      - name : Push the backend image to Azure Container Registry
+        run: |
+          docker push comclassminorregistry.azurecr.io/backend-minor:latest
+
+      - name : Push the Database image to Azure Container Registry
+        run: |
+          docker push comclassminorregistry.azurecr.io/mongo:latest
           
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
