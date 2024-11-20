@@ -125,7 +125,7 @@ jobs:
         run: |
           # Build and push backend
           docker compose build
-          docker push comclassminorregistry.azurecr.io/backend-minor:latest
+          docker push backend-minor:latest
       
       - name : Push the Database image to Azure Container Registry
         run: |
