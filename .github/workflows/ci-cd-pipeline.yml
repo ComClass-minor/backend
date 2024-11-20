@@ -121,15 +121,12 @@ jobs:
           username: ${{ secrets.REGISTRY_USERNAME }}
           password: ${{ secrets.REGISTRY_PASSWORD }}
           
-      - name: Build  all images
+      - name: Build  all images and push one 
         run: |
           # Build and push backend
           docker compose build
-      
-      - name : Push the backend image to Azure Container Registry
-        run: |
           docker push comclassminorregistry.azurecr.io/backend-minor:latest
-
+      
       - name : Push the Database image to Azure Container Registry
         run: |
           docker push comclassminorregistry.azurecr.io/mongo:latest
