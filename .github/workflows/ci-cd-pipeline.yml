@@ -114,7 +114,7 @@ jobs:
       - name: Log in to Azure Container Registry
         uses: azure/docker-login@v1  
         with:
-          login-server: comclassminorregistry.azurecr.io
+          login-server: minor.azurecr.io
           username: ${{ secrets.REGISTRY_USERNAME }}
           password: ${{ secrets.REGISTRY_PASSWORD }}
           
@@ -128,7 +128,7 @@ jobs:
         uses: azure/webapps-deploy@v3
         with:
           app-name: comclass-minor-backend
-          images: comclassminorregistry.azurecr.io/comclass-minor-backend:latest
+          images: minor.azurecr.io/comclass-minor-backend:latest
           
       # Add container app configuration
       - name: Configure container app settings
@@ -136,8 +136,8 @@ jobs:
           az webapp config container set \
             --name comclass-minor-backend\
             --resource-group 569726b3-97fa-4cf7-adba-67d07fde439c_rg_4570\
-            --docker-custom-image-name comclassminorregistry.azurecr.io/comclass-minor-backend:latest \
-            --docker-registry-server-url https://comclassminorregistry.azurecr.io \
+            --docker-custom-image-name minor.azurecr.io/comclass-minor-backend:latest \
+            --docker-registry-server-url https://minor.azurecr.io \
             --docker-registry-server-user ${{ secrets.REGISTRY_USERNAME }} \
             --docker-registry-server-password ${{ secrets.REGISTRY_PASSWORD }} \
             --multicontainer-config-type compose \
