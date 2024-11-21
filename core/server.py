@@ -18,15 +18,14 @@ app.include_router(blogy_router, prefix="/blog")
 # app.include_router(principal_assignments_resources, prefix="/principal")
 # app.include_router(principal_teachers_resources, prefix="/principals")
 
-# @app.get("/")
-# async def ready():
-#     """
-#     Health check endpoint
-#     """
-#     return {
-#         "status": "ready",
-#         "time": helpers.get_utc_now()
-#     }
+@app.get("/")
+async def ready():
+    """
+    Health check endpoint
+    """
+    return {
+        "status": "ready"
+    }
 
 # @app.exception_handler(Exception)
 # async def handle_exception(request: Request, exc: Exception):

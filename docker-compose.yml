@@ -35,3 +35,23 @@ services:
 
 volumes:
   mongodb-data:
+
+
+
+# Here I will write an alternative if we will directly use docker container to load the image instead of creating it
+
+# backend:
+#     image: blue37sam/minor-backend:latest
+#     container_name: backend-minor
+#     ports:
+#       - "8000:8000"
+#     env_file:
+#       - ./core/.env
+#     depends_on:
+#       - mongodb
+#     pull_policy: always 
+
+
+
+
+
