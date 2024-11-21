@@ -76,7 +76,7 @@ jobs:
   
   
   deploy:
-    needs: testing  # Assuming you have a testing job
+    needs: testing  
     runs-on: ubuntu-latest
     
     env:
@@ -85,16 +85,16 @@ jobs:
       
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4  # Updated to v4
+        uses: actions/checkout@v4  
         
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
         
       - name: Set up Python
-        uses: actions/setup-python@v4  # Updated to v4
+        uses: actions/setup-python@v4  
         with:
-          python-version: '3.11'  # Specify exact version
-          cache: 'pip'  # Enable pip caching
+          python-version: '3.11'  
+          cache: 'pip'  
           
       - name: Install dependencies
         run: |
@@ -103,9 +103,7 @@ jobs:
           
       - name: Generate .env file
         env:
-          # Add any secrets needed for config.py
           SECRET_KEY: ${{ secrets.REGISTRY_PASSWORD }}
-          # Add other environment variables
         run: |
           python core/config.py
           
@@ -115,21 +113,17 @@ jobs:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
           
       - name: Log in to Azure Container Registry
-        uses: azure/docker-login@v1  # Use Azure's official action
+        uses: azure/docker-login@v1  
         with:
           login-server: comclassminorregistry.azurecr.io
           username: ${{ secrets.REGISTRY_USERNAME }}
           password: ${{ secrets.REGISTRY_PASSWORD }}
           
-      - name: Build  all images and push one 
+      - name: Build  all images and push them to the registry
         run: |
           # Build and push backend
           docker compose build
-          docker push backend-minor:latest
-      
-      - name : Push the Database image to Azure Container Registry
-        run: |
-          docker push comclassminorregistry.azurecr.io/mongo:latest
+          docker compose push 
           
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
