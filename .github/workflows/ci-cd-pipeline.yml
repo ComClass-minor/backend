@@ -70,7 +70,6 @@ jobs:
 
       - name: Run tests 
         run: |
-          sleep 10
           echo "Running tests..."
   
   
