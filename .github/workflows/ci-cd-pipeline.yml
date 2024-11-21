@@ -142,7 +142,7 @@ jobs:
         run: |
           az webapp config container set \
             --name comclass-minor-backend\
-            --resource-group 569726b3-97fa-4cf7-adba-67d07fde439c_rg_4570\
+            --resource-group minor\
             --docker-custom-image-name minor.azurecr.io/comclass-minor-backend:latest \
             --docker-registry-server-url https://minor.azurecr.io \
             --docker-registry-server-user ${{ secrets.REGISTRY_USERNAME }} \
