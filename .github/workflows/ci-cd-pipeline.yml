@@ -128,7 +128,7 @@ jobs:
             echo "Web app exists."
           else
             echo "Web app does not exist. Creating the web app..."
-            az webapp create --resource-group minor --plan minor --name comclass-minor-backend --deployment-container-image-name minor.azurecr.io/minor-backend:latest --output table
+            az webapp create --resource-group minor --plan devplan --name comclass-minor-backend --deployment-container-image-name minor.azurecr.io/minor-backend:latest --output table
           fi
 
       - name: Deploy to Azure Web App
