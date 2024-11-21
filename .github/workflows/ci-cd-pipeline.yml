@@ -79,7 +79,7 @@ jobs:
     runs-on: ubuntu-latest
     
     env:
-      REGISTRY_NAME: comclassminorregistry
+      REGISTRY_NAME: minor
       APP_NAME: comclass-minor-backend
       
     steps:
@@ -110,7 +110,7 @@ jobs:
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
-          
+   
       - name: Log in to Azure Container Registry
         uses: azure/docker-login@v1  
         with:
@@ -120,12 +120,22 @@ jobs:
           
       - name: Check whether the acr has the images or not
         run: az acr repository list --name minor --output table
-          
+      
+      - name : Create the webapp if not exists
+        run: |
+          # Check if the web app exists
+          if az webapp show --resource-group minor --name comclass-minor-backend > /dev/null 2>&1; then
+            echo "Web app exists."
+          else
+            echo "Web app does not exist. Creating the web app..."
+            az webapp create --resource-group minor --plan minor --name comclass-minor-backend --deployment-container-image-name minor.azurecr.io/minor-backend:latest --output table
+          fi
+
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
           app-name: comclass-minor-backend
-          images: minor.azurecr.io/comclass-minor-backend:latest
+          images: minor.azurecr.io/minor-backend:latest
           
       # Add container app configuration
       - name: Configure container app settings
@@ -145,7 +155,7 @@ jobs:
         run: |
           az webapp config appsettings set \
             --name comclass-minor-backend\
-            --resource-group 569726b3-97fa-4cf7-adba-67d07fde439c_rg_4570 \
+            --resource-group minor \
             --settings \
               WEBSITES_ENABLE_APP_SERVICE_STORAGE=true \
               WEBSITES_PORT=8000 \
@@ -156,5 +166,5 @@ jobs:
         run: |
           az webapp log config \
             --name comclass-minor-backend\
-            --resource-group your-resource-group\
+            --resource-group minor\
             --docker-container-logging filesystem
