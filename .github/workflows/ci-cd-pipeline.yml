@@ -118,11 +118,8 @@ jobs:
           username: ${{ secrets.REGISTRY_USERNAME }}
           password: ${{ secrets.REGISTRY_PASSWORD }}
           
-      - name: Build  all images and push them to the registry
-        run: |
-          # Build and push backend
-          docker compose build
-          docker compose push 
+      - name: Check whether the acr has the images or not
+        run: az acr repository list --name minor --output table
           
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
