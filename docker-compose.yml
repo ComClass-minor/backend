@@ -1,6 +1,7 @@
 services:
   backend:
-    image: backend-minor:latest
+    # image: minor.azurecr.io/minor-backend:latest
+    image: minor-backend:latest
     container_name: backend-minor
     build:
       context: .
