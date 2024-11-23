@@ -9,7 +9,7 @@ venv.bak/
 *.pyc
 __pycache__/
 # # Unit test / coverage reports
-# .coverage
-# .coverage.*
+.coverage
+.coverage.*
 # I dont want to keep the tchtchtch.py file in the repo
 tchtchctch.py
