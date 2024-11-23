@@ -35,16 +35,12 @@ def create_jwt_token(data : dict , expire_time : timedelta = timedelta(minutes=A
     Returns:
         str: The encoded JWT token.
     """
-    print(1)
+    
     new_data = data.copy()
-    print(2)
     expire = datetime.now() + expire_time
-    print(3)
     new_data.update({"exp":expire})
-    print(4)
     print(new_data , SECRET_KEY , ALGORITHM)
     encoded_jwt = jwt.encode(new_data, SECRET_KEY, algorithm=ALGORITHM)
-    print(5)
     return encoded_jwt
 
 @router.post("/signin" , response_model=APIResponse)
