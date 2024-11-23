@@ -35,7 +35,7 @@ def create_jwt_token(data : dict , expire_time : timedelta = timedelta(minutes=A
     Returns:
         str: The encoded JWT token.
     """
-    
+
     new_data = data.copy()
     expire = datetime.now() + expire_time
     new_data.update({"exp":expire})
@@ -58,7 +58,7 @@ async def signin(student: StudentLogin):
 
     except Exception as e:
         return APIResponse.respond(
-            status_code=400,
+            status_code=409,
             status="error",
             message="Bad request"
         )
@@ -78,7 +78,7 @@ async def signin(student: StudentLogin):
                     student_record["id"] = str(student_record["id"])
                 print(student_record , 2)
                 return APIResponse.respond(
-                    status_code=200,
+                    status_code=201,
                     status="success",
                     message="Student signed in successfully",
                     data={"token":token , "student":student_record}
