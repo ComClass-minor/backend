@@ -12,7 +12,8 @@ __pycache__/
 .coverage
 .coverage.*
 # I dont want to keep the tchtchtch.py file in the repo
-tchtchctch.py__pycache__/
+tchtchctch.py
+__pycache__/
 *.pyc
 __pycache__/
 *.pyc
