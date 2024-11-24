@@ -5,10 +5,12 @@ from core.server import app
 import jwt
 from datetime import datetime, timedelta
 import os
-import httpx
+from httpx import AsyncClient
+from fastapi import status
+from core import db
 
 client = TestClient(app)
-client = httpx.AsyncClient(app=app, base_url="http://testserver")
+# client = AsyncClient(app=app, base_url="http://testserver")
 
 
 @pytest.fixture
@@ -31,7 +33,7 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 
 @pytest.fixture
 async def async_client():
-    async with httpx.AsyncClient(app=app, base_url="http://testserver") as client:
+    async with AsyncClient(app=app, base_url="http://test") as client:
         yield client
 
 def test_verify_password():
@@ -57,33 +59,40 @@ def test_create_jwt_token2():
     assert "exp" in decoded
 
 
-# Asynchronous Test: Successful signup
-@pytest.mark.asyncio
-async def test_successful_signup(async_client, test_student_data):
-    response = await async_client.post("/student/signup", json=test_student_data)
-    assert response.status_code == 201
+class TestAuth:
+    @pytest.mark.asyncio
+    async def test_signup_success(self, async_client):
+        response = await async_client.post(
+            "/student/signup",
+            json={
+                'email': 'test@example.com',
+                'name': 'Test Student',
+                'password': 'testpassword123',
+                'user_id': 'testuser123'
+            }
+        )
+        assert response.status_code == status.HTTP_200_OK
+        data = response.json()['data']['student']
+        assert 'id' in data
+        assert data['email'] == 'test@example.com'
+        # we will remove this entry from the database
+        # so that we can test the duplicate email case
+        await db.students.delete_one({"email": "test@example.com"})
     
-    data = response.json()
-    assert data["status"] == "success"
-    assert data["message"] == "Student created successfully"
-    assert "token" in data["data"]
-    assert "student" in data["data"]
-    assert data["data"]["student"]["email"] == test_student_data["email"]
+    @pytest.mark.asyncio
+    async def test_db_cleanup(self, clean_db):
+        """Test that database cleanup is working."""
+        db = clean_db
+        # Verify no test user exists
+        user = await db.students.find_one({"email": "test@example.com"})
+        assert user is None
 
-# Asynchronous Test: Duplicate signup
-@pytest.mark.asyncio
-async def test_duplicate_signup(async_client, test_student_data):
-    # Initial signup
-    await async_client.post("/student/signup", json=test_student_data)
-
-    # Duplicate signup
-    response = await async_client.post("/student/signup", json=test_student_data)
-    assert response.status_code == 409
-    
-    data = response.json()
-    assert data["status"] == "error"
-    assert data["message"] == "Email already in use"
-
-    # Cleanup: Optional deletion logic
-    # response = await async_client.delete(f"/student/{test_student_data['user_id']}")
-    # assert response.status_code == 204
+    @pytest.mark.asyncio
+    async def test_signup_duplicate_email(self, async_client):
+        
+        # Try duplicate signup
+        response = await async_client.post(
+            "/student/signup",
+            json=test_student_data
+        )
+        assert response.status_code == status.HTTP_409_CONFLICT

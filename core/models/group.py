@@ -49,6 +49,24 @@ class Group(BaseModel):
     
     @classmethod
     async def create_group(cls, group: 'Group') -> 'Group':
+        """
+        params:
+            group: Group{
+                name: str,
+                feild: str,
+                min_requirement: int,
+                creator_id: str,
+                max_limit: int,
+                current_capacity: int,
+                created_at: datetime,
+                updated_at: datetime,
+                student_list: List[dict],
+                avg_rating: float,
+                status: str,
+                number_of_coadmins: int,
+                number_of_elders: int
+            }
+        """
         try:
             creator = await Student.get_student_by_id(group.creator_id)
             assertions.assert_not_found(creator, "Creator not found")
