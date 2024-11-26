@@ -8,6 +8,8 @@ from core.server import app
 # Configure pytest-asyncio
 pytest_plugins = ('pytest_asyncio',)
 
+client = TestClient(app)
+
 @pytest.fixture(scope="session")
 def event_loop():
     """Create an instance of the default event loop for each test case."""

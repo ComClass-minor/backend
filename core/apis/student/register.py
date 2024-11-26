@@ -47,6 +47,17 @@ def create_jwt_token(data : dict , expire_time : timedelta = timedelta(minutes=A
 async def signin(student: StudentLogin):
     """
     Sign in the student using the email and password
+    Args:
+        "email" (str): The email of the student.
+        "password" (str): The password of the student.
+    Returns:
+        dict: The response object.
+    Raises:
+        HTTPException 400 : If the email or password is not provided.
+        HTTPException 409 : If the password is incorrect.
+        HTTPException 401 : If the password is incorrect.
+        HTTPException 404 : If the student is not found.
+        HTTPException 500 : If there is an internal server error.
     """
     try:
         email = student.email
@@ -77,8 +88,10 @@ async def signin(student: StudentLogin):
                 if "id" in student_record:
                     student_record["id"] = str(student_record["id"])
                 print(student_record , 2)
+                student_record["created_at"] = student_record["created_at"].isoformat()
+                student_record["updated_at"] = student_record["updated_at"].isoformat()
                 return APIResponse.respond(
-                    status_code=201,
+                    status_code=200,
                     status="success",
                     message="Student signed in successfully",
                     data={"token":token , "student":student_record}
@@ -98,12 +111,7 @@ async def signin(student: StudentLogin):
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail="Internal server error") 
-        # return APIResponse.respond(
-        #     status_code=500,
-        #     status="error",
-        #     message="Internal server error"
-        # )
-    
+
 
 @router.post("/signup", response_model=APIResponse)
 async def signup(student: Student):

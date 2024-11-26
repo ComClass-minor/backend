@@ -91,5 +91,19 @@ class TestAuth:
         )
         print(response2.json())
         assert response2.status_code == status.HTTP_409_CONFLICT
-        await db.students.delete_one({"email": "test@example.com"})
+
+    
+    @pytest.mark.asyncio
+    async def test_signin_success(self, async_client, test_student_data):
+        response = await async_client.post(
+            "/student/signin",
+            json={
+                'email': 'test@example.com',
+                'password': 'testpassword123'
+            }
+        )
+        print(response.json())
+        assert response.status_code == 200
+        assert response.json()["status"] == "success"
+        db_student = await db.students.find_one({"email": "test@example.com"})
         
