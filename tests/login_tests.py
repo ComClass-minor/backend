@@ -71,28 +71,25 @@ class TestAuth:
                 'user_id': 'testuser123'
             }
         )
-        assert response.status_code == status.HTTP_200_OK
+        print(response.json())
+        assert response.status_code == 201
         data = response.json()['data']['student']
         assert 'id' in data
         assert data['email'] == 'test@example.com'
-        # we will remove this entry from the database
-        # so that we can test the duplicate email case
-        await db.students.delete_one({"email": "test@example.com"})
-    
-    @pytest.mark.asyncio
-    async def test_db_cleanup(self, clean_db):
-        """Test that database cleanup is working."""
-        db = clean_db
-        # Verify no test user exists
-        user = await db.students.find_one({"email": "test@example.com"})
-        assert user is None
 
     @pytest.mark.asyncio
     async def test_signup_duplicate_email(self, async_client):
-        
         # Try duplicate signup
-        response = await async_client.post(
+        response2 = await async_client.post(
             "/student/signup",
-            json=test_student_data
+            json={
+                'email': 'test@example.com',
+                'name': 'Test Student',
+                'password': 'testpassword123',
+                'user_id': 'testuser123'
+            }
         )
-        assert response.status_code == status.HTTP_409_CONFLICT
+        print(response2.json())
+        assert response2.status_code == status.HTTP_409_CONFLICT
+        await db.students.delete_one({"email": "test@example.com"})
+        

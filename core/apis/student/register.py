@@ -114,7 +114,6 @@ async def signup(student: Student):
         # Check if the student with this email already exists
 
         student_record = await Student.get_student_by_email(student.email)
-        logging.error(f"Student record type: {type(student_record)}")
 
         if student_record:
             return APIResponse.respond(
@@ -140,8 +139,8 @@ async def signup(student: Student):
             # "user_id": student_record.user_id,
             "name": student.name,
             "email": student.email,
-            "created_at": student.created_at,
-            "updated_at": student.updated_at,
+            "created_at": student.created_at.isoformat(),
+            "updated_at": student.updated_at.isoformat(),
             "rating": student.rating,
             "group_list": student.group_list,
             "group_limit": student.group_limit
@@ -161,13 +160,7 @@ async def signup(student: Student):
             status="error",
             message=f"Validation error: {str(ve)}"
         )
-    # except IntegrityError as ie:  # Example of catching a specific exception
-    #     logging.error(f"Integrity error during signup: {str(ie)}")
-    #     return APIResponse.respond(
-    #         status_code=400,
-    #         status="error",
-    #         message="Database integrity error"
-    #     )
+
     except Exception as e:
         logging.error(f"Error during signup: {str(e)}")
         return APIResponse.respond(
