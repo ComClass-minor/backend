@@ -84,7 +84,9 @@ class Group(BaseModel):
             creator.pop('id', None)
             await Student.update_student(creator)
             group = await db.groups.insert_one(group.dict())
-            return group
+            inserted_id = group.inserted_id
+            group_document = await db.groups.find_one({"_id": inserted_id})
+            return group_document
         except Exception as e:
             logging.error(f"An error occurred: {e}")
             return None
@@ -92,6 +94,14 @@ class Group(BaseModel):
 
     @staticmethod
     async def join_group(group_id: str, student_id: str) -> bool:
+        """
+        This method is used to join a group.
+        params:
+            group_id: str
+            student_id: str
+        returns:
+            bool : True if the student is successfully added to the group, False otherwise.
+        """
         try:
             group = await db.groups.find_one({"_id": ObjectId(group_id)})
             assertions.assert_not_found(group, "Group not found")
@@ -123,4 +133,7 @@ class Group(BaseModel):
         except Exception as e:
             logging.error(f"An error occurred: {e}")
             return False
+    
+    def __repr__(self):
+        return f'<Group {self.id}>'
 

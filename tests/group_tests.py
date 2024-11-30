@@ -1,6 +1,13 @@
 import pytest
 
-
+@pytest.fixture
+def test_group_data():
+    return {
+            'name': 'testgroup',
+            'feild': 'testfield',
+            'min_requirement': 1,
+            'creator_id': 'testuser123'
+        }
 
 # we need to login first to get the token
 @pytest.mark.asyncio
@@ -36,3 +43,8 @@ async def test_create_group(async_client,test_student_data , test_student_login_
     assert response.status_code == 201
     assert response.json()["status"] == "success"
     assert response.json()["message"] == "Group created successfully"
+
+
+
+# @pytest.mark.asyncio
+# async def test_join_group

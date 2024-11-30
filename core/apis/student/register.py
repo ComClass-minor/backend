@@ -76,18 +76,13 @@ async def signin(student: StudentLogin):
     try:
         # Check if the student with this email already exists
         student_record = await Student.get_student_by_email(email)
-        print(student_record)
         if student_record:
-            print(student_record["password"])
             if verify_password(password, student_record["password"]):
-                print("Password verified")
                 token = create_jwt_token({"email":email})
-                print(token)
                 if "_id" in student_record:
                     del student_record["_id"]
                 if "id" in student_record:
                     student_record["id"] = str(student_record["id"])
-                print(student_record , 2)
                 student_record["created_at"] = student_record["created_at"].isoformat()
                 student_record["updated_at"] = student_record["updated_at"].isoformat()
                 return APIResponse.respond(
@@ -135,9 +130,7 @@ async def signup(student: Student):
 
         # Create a new student record
         student_record = await Student.create_student(student)
-        print(student_record)
-
-        
+    
         # Create JWT token
         token = create_jwt_token({"email": student.email})
 

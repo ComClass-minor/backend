@@ -28,16 +28,38 @@ async def create_group(
             - status_code: int
             - status: str
             - message: str
+            - data: dict containing the created group
     """
 
     # Attempt to create a new group
     try:
         created_group = await Group.create_group(group)
+        print(f" inside group :{created_group}")
         if created_group:
+
+            serialized_group = {
+                'id' : str(created_group['id']),
+                'name': created_group['name'],
+                'feild': created_group['feild'],
+                'min_requirement': created_group['min_requirement'],
+                'creator_id': created_group['creator_id'],
+                'max_limit': created_group['max_limit'],
+                'current_capacity': created_group['current_capacity'],
+                'created_at': created_group['created_at'].isoformat(),
+                'updated_at': created_group['updated_at'].isoformat(),
+                'student_list': created_group['student_list'],
+                'avg_rating': created_group['avg_rating'],
+                'status': created_group['status'],
+                'number_of_coadmins': created_group['number_of_coadmins'],
+                'number_of_elders': created_group['number_of_elders']
+            
+            }
+
             return APIResponse.respond(
                 status_code=201,
                 status="success",
-                message="Group created successfully"
+                message="Group created successfully",
+                data={"group": serialized_group}
             )
         else:
             raise HTTPException(
