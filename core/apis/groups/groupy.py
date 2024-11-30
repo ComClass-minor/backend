@@ -34,7 +34,6 @@ async def create_group(
     # Attempt to create a new group
     try:
         created_group = await Group.create_group(group)
-        print(f" inside group :{created_group}")
         if created_group:
 
             serialized_group = {

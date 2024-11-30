@@ -20,11 +20,9 @@ async def test_auth_token(async_client , test_student_data , test_student_login_
 @pytest.mark.asyncio
 async def test_create_group(async_client,test_student_data , test_student_login_data):
     response1 = await async_client.post("/student/signup", json=test_student_data)
-    print(f"Signup Response: {response1.status_code}, {response1.json()}")
 
     # Sign in
     response2 = await async_client.post("/student/signin", json=test_student_login_data)
-    print(f"Signin Response: {response2.status_code}, {response2.json()}")
 
     auth_token = response2.json().get("data", {}).get("token")
     assert auth_token, "Authentication token not found!"
