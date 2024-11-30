@@ -1,42 +1,38 @@
-from core.server import app
 import pytest
-from fastapi.testclient import TestClient
-from httpx import AsyncClient
-from core import db
 
-client = TestClient(app)
-
-@pytest.fixture
-async def async_client():
-    async with AsyncClient(app=app, base_url="http://test") as client:
-        yield client
 
 
 # we need to login first to get the token
-@pytest.fixture
-async def auth_token(async_client):
-    response = await async_client.post("/student/signin",
-        json={
-            'email': 'test@example.com',
-            'password': 'testpassword123'
-        }
-    )
+@pytest.mark.asyncio
+async def test_auth_token(async_client , test_student_data , test_student_login_data):
+    response1 = await async_client.post("/student/signup",json=test_student_data)
+    response = await async_client.post("/student/signin",json=test_student_login_data)
     assert response.status_code == 200
     return response.json()["data"]["token"]
 
 @pytest.mark.asyncio
-async def test_create_group(async_client, auth_token):
+async def test_create_group(async_client,test_student_data , test_student_login_data):
+    response1 = await async_client.post("/student/signup", json=test_student_data)
+    print(f"Signup Response: {response1.status_code}, {response1.json()}")
+
+    # Sign in
+    response2 = await async_client.post("/student/signin", json=test_student_login_data)
+    print(f"Signin Response: {response2.status_code}, {response2.json()}")
+
+    auth_token = response2.json().get("data", {}).get("token")
+    assert auth_token, "Authentication token not found!"
+
     response = await async_client.post("/group/create_group",
         headers={"Authorization": f"Bearer {auth_token}"},
         json={
             'name': 'testgroup',
-            'field': 'testfield',
+            'feild': 'testfield',
             'min_requirement': 1,
-            'creator_id': 'testcreator'
+            'creator_id': 'testuser123'
         }
     )
+    print(f"Create Group Response: {response.status_code}, {response.json()}")
+
     assert response.status_code == 201
     assert response.json()["status"] == "success"
     assert response.json()["message"] == "Group created successfully"
-    db.groups.delete_many({"name": "testgroup"})
-    db.students.delete_many({"email": "test@example.com"})
