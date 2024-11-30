@@ -4,6 +4,7 @@ import asyncio
 from httpx import AsyncClient
 from fastapi.testclient import TestClient
 from core.server import app
+from core import db
 
 # Configure pytest-asyncio
 pytest_plugins = ('pytest_asyncio',)
@@ -29,18 +30,28 @@ async def async_client():
     async with AsyncClient(app=app, base_url="http://test") as test_client:
         yield test_client
 
-@pytest.fixture
-async def db():
-    """Get database connection."""
-    return await db()
 
-@pytest.fixture
-async def clean_db(db):
+@pytest.fixture(autouse=True)
+async def clean_db():
     """Clean up test data before and after tests."""
     # Clean up before test
-    await db.students.delete_many({"email": "test@example.com"})
-    
-    yield db  # Run the test
-    
-    # Clean up after test
-    await db.students.delete_many({"email": "test@example.com"})
+    await db.students.delete_many({})
+    await db.groups.delete_many({})
+    await db.blogs.delete_many({})
+
+@pytest.fixture
+def test_student_data():
+    return {
+        "user_id": "testuser123",
+        "name": "Test Student",
+        "email": "test@example.com",
+        "password": "testpassword123",
+    }
+
+
+@pytest.fixture
+def test_student_login_data():
+    return {
+        "email": "test@example.com",
+        "password": "testpassword123"
+    }

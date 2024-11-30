@@ -16,8 +16,8 @@ app.add_middleware(
 )
 
 # Connect to MongoDB
-# client = AsyncIOMotorClient("mongodb://localhost:27017") 
-client = AsyncIOMotorClient("mongodb://mongodb:27017")
+client = AsyncIOMotorClient("mongodb://localhost:27017") 
+# client = AsyncIOMotorClient("mongodb://mongodb:27017")
 #the second mongodb is the name of the service in the docker-compose file
 
 db = client["community"]
