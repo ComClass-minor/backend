@@ -94,19 +94,28 @@ class Group(BaseModel):
 
     @staticmethod
     async def join_group(group_id: str, student_id: str) -> bool:
-        """
-        This method is used to join a group.
-        params:
-            group_id: str
-            student_id: str
-        returns:
-            bool : True if the student is successfully added to the group, False otherwise.
-        """
         try:
-            group = await db.groups.find_one({"_id": ObjectId(group_id)})
-            assertions.assert_not_found(group, "Group not found")
+            # First, print out all debugging information
+            print(f"Attempting to join group with ID: {group_id}")
+            print(f"Student ID: {student_id}")
+
+            # Check if group_id is a valid ObjectId
+            try:
+                object_group_id = ObjectId(group_id)
+            except Exception as id_error:
+                print(f"Invalid ObjectId conversion: {id_error}")
+                return False
+
+            # Find the group
+            group = await db.groups.find_one({"_id": object_group_id})
+            
+            # Additional debugging
+            print(f"Group found: {group}")
+            if not group:
+                print(f"No group found with ID: {group_id}")
+            return False
             student = await Student.get_student_by_id(student_id)
-            assertions.assert_not_found(student, "Student not found")
+            assertions.assert_not_found(student, f"Student not found with id: {student_id}")
             group['student_list'] += [{str(student_id): "Member"}]
             student['group_list'] += [{group_id: "Member"}]
             await db.groups.update_one({"_id": ObjectId(group_id)}, {"$set": group})

@@ -1,4 +1,6 @@
 import pytest
+from bson import ObjectId
+from core import db
 
 @pytest.fixture
 def test_group_data():
@@ -67,6 +69,7 @@ async def test_join_group(async_client,test_student_data , test_student_login_da
     auth_token = response.json().get("data", {}).get("token")
     assert auth_token, "Authentication token not found!"
 
+
     response = await async_client.post("/group/create_group", headers={"Authorization": f"Bearer {auth_token}"}, json=test_group_data)
     group_id = response.json()["data"]["group"]["id"]
 
@@ -80,6 +83,10 @@ async def test_join_group(async_client,test_student_data , test_student_login_da
 
     user_id = response.json()["data"]["student"]["user_id"]
 
+    print(f"Group ID: {group_id}")
+    print(f"User ID: {user_id}")
+    a = await db.groups.find_one({"_id": ObjectId(group_id)})
+    print(a)
     response = await async_client.post("/group/join_group", json={"group_id": group_id, "user_id": user_id})
 
     assert response.status_code == 200
