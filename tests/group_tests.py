@@ -54,7 +54,6 @@ async def test_create_group(async_client,test_student_data , test_student_login_
             'creator_id': 'testuser123'
         }
     )
-    print(f"Create Group Response: {response.status_code}, {response.json()}")
 
     assert response.status_code == 201
     assert response.json()["status"] == "success"
@@ -79,14 +78,10 @@ async def test_join_group(async_client,test_student_data , test_student_login_da
 
     response = await async_client.post("/student/signup", json=test_student_data2)
     response = await async_client.post("/student/signin", json=test_student_login_data2)
-    print(response.json()['data']['student']['user_id'])
+
 
     user_id = response.json()["data"]["student"]["user_id"]
 
-    print(f"Group ID: {group_id}")
-    print(f"User ID: {user_id}")
-    a = await db.groups.find_one({"_id": ObjectId(group_id)})
-    print(a)
     response = await async_client.post("/group/join_group", json={"group_id": group_id, "user_id": user_id})
 
     assert response.status_code == 200

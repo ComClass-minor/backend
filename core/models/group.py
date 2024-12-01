@@ -86,6 +86,7 @@ class Group(BaseModel):
             group = await db.groups.insert_one(group.dict())
             inserted_id = group.inserted_id
             group_document = await db.groups.find_one({"_id": inserted_id})
+            group_document['id'] = str(group_document['_id'])
             return group_document
         except Exception as e:
             logging.error(f"An error occurred: {e}")
@@ -108,11 +109,7 @@ class Group(BaseModel):
 
             # Find the group
             group = await db.groups.find_one({"_id": object_group_id})
-            
-            # Additional debugging
-            print(f"Group found: {group}")
             if not group:
-                print(f"No group found with ID: {group_id}")
                 return False
             student = await Student.get_student_by_id(student_id)
             assertions.assert_not_found(student, f"Student not found with id: {student_id}")
