@@ -113,7 +113,7 @@ class Group(BaseModel):
             print(f"Group found: {group}")
             if not group:
                 print(f"No group found with ID: {group_id}")
-            return False
+                return False
             student = await Student.get_student_by_id(student_id)
             assertions.assert_not_found(student, f"Student not found with id: {student_id}")
             group['student_list'] += [{str(student_id): "Member"}]
