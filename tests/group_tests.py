@@ -9,6 +9,22 @@ def test_group_data():
             'creator_id': 'testuser123'
         }
 
+@pytest.fixture
+def test_student_data2():
+    return {
+        "user_id": "testuser12345",
+        "name": "Test Student 2",
+        "email": "test@examples.com",
+        "password": "testpassword12345",
+    }
+
+@pytest.fixture
+def test_student_login_data2():
+    return {
+        "email": "test@examples.com",
+        "password": "testpassword12345"
+    }
+
 # we need to login first to get the token
 @pytest.mark.asyncio
 async def test_auth_token(async_client , test_student_data , test_student_login_data):
@@ -44,5 +60,26 @@ async def test_create_group(async_client,test_student_data , test_student_login_
 
 
 
-# @pytest.mark.asyncio
-# async def test_join_group
+@pytest.mark.asyncio
+async def test_join_group(async_client,test_student_data , test_student_login_data,test_group_data , test_student_data2 , test_student_login_data2):
+    response = await async_client.post("/student/signup", json=test_student_data)
+    response = await async_client.post("/student/signin", json=test_student_login_data)
+    auth_token = response.json().get("data", {}).get("token")
+    assert auth_token, "Authentication token not found!"
+
+    response = await async_client.post("/group/create_group", headers={"Authorization": f"Bearer {auth_token}"}, json=test_group_data)
+    group_id = response.json()["data"]["group"]["id"]
+
+    assert response.status_code == 201
+    assert response.json()["status"] == "success"
+    assert response.json()["message"] == "Group created successfully"
+
+    response = await async_client.post("/student/signup", json=test_student_data2)
+    response = await async_client.post("/student/signin", json=test_student_login_data2)
+    print(response.json()['data'])
+
+    # user_id = response.json()["data"]["user"]["id"]
+
+    assert response.status_code == 200
+    assert response.json()["status"] == "success"
+    assert response.json()["message"] == "Joined group successfully"
