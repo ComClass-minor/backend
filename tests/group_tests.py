@@ -1,6 +1,4 @@
 import pytest
-from bson import ObjectId
-from core import db
 
 @pytest.fixture
 def test_group_data():
