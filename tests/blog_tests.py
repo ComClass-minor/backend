@@ -25,4 +25,21 @@ async def test_create_blog(async_client : AsyncClient, test_student_data: dict, 
 
     assert response.status_code == 201
     assert response.json()["status"] == "success"
-    assert response.json()["message"] == "Blog created successfully"    
+    assert response.json()["message"] == "Blog created successfully" 
+
+@pytest.mark.asyncio
+async def test_failed_create_blog(async_client : AsyncClient, test_student_data: dict, test_student_login_data: dict , test_blog_data: dict):
+    response = await async_client.post("/student/signup", json=test_student_data)
+    response = await async_client.post("/student/signin", json=test_student_login_data)
+    auth_token = response.json().get("data", {}).get("token")
+    assert auth_token, "Authentication token not found!"
+    print(f"auth_token: {auth_token}")
+
+    test_blog_data["author_id"] = "invalid_author_id"
+    response = await async_client.post("/blog/create_blog", 
+                                       headers={"Authorization": f"Bearer {auth_token}"}, 
+                                       json=test_blog_data
+                                       )
+
+    assert response.status_code == 404
+    assert response.json()["detail"] == "Student not found"   

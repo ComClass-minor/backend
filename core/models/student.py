@@ -8,6 +8,7 @@ from typing import List, Optional
 from core import db
 from core.libs import assertions
 import logging
+from fastapi import HTTPException
 
 class PyObjectId(ObjectId):
     @classmethod
@@ -124,7 +125,8 @@ class Student(BaseModel):
         """
         try:
             student = await db.students.find_one({"user_id": id})
-            assertions.assert_not_found(student, "Student not found")
+            if not student:
+                raise HTTPException(status_code=404, detail="Student not found")
             return student
         except Exception as e:
             logging.error(f"Error fetching student by id: {str(e)}")

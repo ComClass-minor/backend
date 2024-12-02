@@ -35,11 +35,14 @@ async def create_blog(
                 status="success",
                 message="Blog created successfully"
             )
+
         else:
             raise HTTPException(
                 status_code=500,
                 detail="Failed to create the blog"
             )
+    # except HTTPException as e:
+    #     raise e
     except Exception as e:
         # Log the exception and return a 500 response
         logging.error(f"Error creating blog: {e}")

@@ -8,6 +8,7 @@ from core.libs import assertions
 from typing import List, Optional
 import logging
 from core.models.student import Student
+from fastapi import HTTPException
 
 
 class PyObjectId(str):
@@ -90,7 +91,8 @@ class Blog(BaseModel):
         """
         try:
             author = await Student.get_student_by_id(blog.author_id)
-            assertions.assert_not_found(author, "Author not found")
+            if not author:
+                raise HTTPException(status_code=404, detail=f"Author with author id : {blog.author_id} is not found")
         except Exception as e:
             logging.error(f"An error occurred: {e}")
             return None
