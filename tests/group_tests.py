@@ -115,3 +115,23 @@ async def test_leave_group_member(async_client,test_student_data , test_student_
     assert response.status_code == 200
     assert response.json()["status"] == "success"
     assert response.json()["message"] == "Left group successfully"
+
+@pytest.mark.asyncio
+async def test_leave_group_creator(async_client,test_student_data , test_student_login_data,test_group_data):
+    response = await async_client.post("/student/signup", json=test_student_data)
+    response = await async_client.post("/student/signin", json=test_student_login_data)
+    auth_token = response.json().get("data", {}).get("token")
+    assert auth_token, "Authentication token not found!"
+
+    response = await async_client.post("/group/create_group", headers={"Authorization": f"Bearer {auth_token}"}, json=test_group_data)
+    group_id = response.json()["data"]["group"]["id"]
+
+    assert response.status_code == 201
+    assert response.json()["status"] == "success"
+    assert response.json()["message"] == "Group created successfully"
+
+    response = await async_client.post("/group/leave_group", json={"group_id": group_id, "user_id": test_student_data["user_id"]})
+
+    assert response.status_code == 200
+    assert response.json()["status"] == "success"
+    assert response.json()["message"] == "Left group successfully"
